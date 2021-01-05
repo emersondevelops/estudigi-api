@@ -1,11 +1,16 @@
 package br.com.estudigi.api.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "class_groups")
+@Getter
+@Setter
 public class ClassGroup {
 
     @Id
@@ -15,7 +20,7 @@ public class ClassGroup {
     @Column
     String name;
 
-    @ManyToMany
+    @ManyToMany(mappedBy="classGroups", cascade = CascadeType.ALL)
     List<User> users;
 
     @Column

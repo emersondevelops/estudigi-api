@@ -1,35 +1,48 @@
 package br.com.estudigi.api.controller;
 
+import br.com.estudigi.api.controller.dto.UserDto;
 import br.com.estudigi.api.model.User;
 import br.com.estudigi.api.repository.UserRepository;
-import javassist.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
+    final
     UserRepository userRepository;
+
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @GetMapping
     @CrossOrigin
-    public Page<User> read(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public List<UserDto> read(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return UserDto.convert(users);
+    }
+
+    @GetMapping("/role/{role}")
+    @CrossOrigin
+    public List<UserDto> readByRole(Pageable pageable, @PathVariable String role) {
+        Page<User> users = userRepository.findByRole(pageable, role);
+        return UserDto.convert(users);
     }
 
     @GetMapping("/{userId}")
     @CrossOrigin
-    public ResponseEntity<User> readById(@PathVariable Long userId)
-            throws NotFoundException {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Student not found for id: " + userId));
-        return ResponseEntity.ok(existingUser);
+    public ResponseEntity<UserDto> readById(@PathVariable Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.map(value -> ResponseEntity.ok(new UserDto(value))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
