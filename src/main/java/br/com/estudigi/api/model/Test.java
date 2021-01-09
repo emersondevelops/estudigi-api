@@ -27,6 +27,6 @@ public class Test {
     @ManyToOne
     User createdBy;
 
-    LocalDateTime createdAt;
+    LocalDateTime createdAt = LocalDateTime.now();
     LocalDateTime lastUpdate;
 }

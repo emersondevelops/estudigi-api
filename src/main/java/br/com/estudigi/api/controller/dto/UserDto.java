@@ -15,15 +15,15 @@ public class UserDto {
     String fullName;
     String email;
     String role;
-    //List<ClassGroupDto> classGroups;
+    List<UserClassGroupsDto> classGroups;
 
     public UserDto(User user) {
         this.userId = user.getId();
         this.fullName = user.getFullName();
         this.email = user.getEmail();
         this.role = user.getRole().getDescription();
-        //this.classGroups = new ArrayList<>();
-        //this.classGroups.addAll(user.getClassGroups().stream().map(ClassGroupDto::new).collect(Collectors.toList()));
+        this.classGroups = new ArrayList<>();
+        this.classGroups.addAll(user.getClassGroups().stream().map(UserClassGroupsDto::new).collect(Collectors.toList()));
     }
 
     public static List<UserDto> convert(Page<User> users) {

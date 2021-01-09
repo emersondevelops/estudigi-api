@@ -27,6 +27,6 @@ public class QuestionController {
     @CrossOrigin
     public ResponseEntity<Question> create(@RequestBody Question question) {
         Question newQuestion = questionRepository.save(question);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(newQuestion);
     }
 }
