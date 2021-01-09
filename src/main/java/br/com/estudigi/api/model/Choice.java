@@ -12,8 +12,10 @@ import javax.persistence.*;
 public class Choice {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Integer id;
 
+    @Column(columnDefinition = "text")
     String text;
+
     Boolean correct;
 }

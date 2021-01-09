@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Getter
 public class StudentDto {
 
-    Long userId;
+    Integer userId;
     String fullName;
 
     public StudentDto(User user) {

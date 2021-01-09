@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @CrossOrigin
-    public ResponseEntity<UserDto> readById(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> readById(@PathVariable Integer userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.map(value -> ResponseEntity.ok(new UserDto(value))).orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -15,13 +15,10 @@ public class TestResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Integer id;
 
     @ManyToOne
     TestEvent testEvent;
-
-    @ManyToOne
-    User student;
 
     @Column(columnDefinition = "json")
     @JsonRawValue

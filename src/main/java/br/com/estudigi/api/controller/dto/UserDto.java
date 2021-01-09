@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Getter
 public class UserDto {
 
-    Long userId;
+    Integer userId;
     String fullName;
     String email;
     String role;

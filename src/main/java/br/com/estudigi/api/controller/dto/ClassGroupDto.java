@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Getter
 public class ClassGroupDto {
-    Long classGroupId;
+    Integer classGroupId;
     String name;
     List<UserDto> members;
 

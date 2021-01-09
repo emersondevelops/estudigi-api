@@ -1,9 +1,9 @@
 package br.com.estudigi.api.repository;
 
-import br.com.estudigi.api.model.ClassGroup;
+import br.com.estudigi.api.model.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ClassGroupRepository extends JpaRepository<ClassGroup, Integer> {
+public interface TestRepository extends JpaRepository<Test, Integer> {
 }

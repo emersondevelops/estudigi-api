@@ -15,7 +15,7 @@ public class ClassGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Integer id;
 
     @Column
     String name;

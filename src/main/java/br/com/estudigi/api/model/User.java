@@ -18,7 +18,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Integer id;
 
     @Column
     String fullName;
@@ -40,7 +40,6 @@ public class User {
     @Column
     String password;
 
-    @Column
     @Enumerated(EnumType.STRING)
     Role role;
 
@@ -53,11 +52,6 @@ public class User {
     @Column
     LocalDateTime lastLogin;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="user_class_group",
-            joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="class_group_id")})
-    List<ClassGroup> classGroups;
 
     @Column
     Boolean active;
@@ -70,4 +64,13 @@ public class User {
 
     @Column
     String otherInfo;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="user_class_group",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns={@JoinColumn(name="class_group_id")})
+    List<ClassGroup> classGroups;
+
+    @OneToMany
+    List<TestEvent> testEvents;
 }

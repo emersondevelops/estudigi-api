@@ -15,7 +15,7 @@ public class TestEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Integer id;
 
     String name;
 
@@ -25,9 +25,17 @@ public class TestEvent {
     @OneToMany
     List<ClassGroup> classGroups;
 
+    @ManyToOne
+    User user;
+
     Double questionValue;
+
     Boolean repeatable;
+
+    @Column(columnDefinition = "tinyint")
     Integer repeatTimes;
+
     LocalDateTime createdAt;
+
     LocalDateTime lastUpdate;
 }
