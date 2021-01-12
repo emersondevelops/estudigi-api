@@ -20,16 +20,19 @@ public class Test {
     String name;
 
     @OneToMany
-//    @JoinTable(name = "test_question",
-//            joinColumns = @JoinColumn(name = "test_id"),
-//            inverseJoinColumns = @JoinColumn(name = "question_id"))
+    @JoinTable(name = "test_question",
+            joinColumns = @JoinColumn(name = "test_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id"))
     List<Question> questions;
 
     @OneToMany
-//    @JoinTable(name = "test_class_group",
-//            joinColumns = @JoinColumn(name = "test_id"),
-//            inverseJoinColumns = @JoinColumn(name = "class_group_id"))
+    @JoinTable(name = "test_class_group",
+            joinColumns = @JoinColumn(name = "test_id"),
+            inverseJoinColumns = @JoinColumn(name = "class_group_id"))
     List<ClassGroup> classGroups;
+
+    @ManyToOne
+    User createdBy;
 
     Double questionValue;
 
