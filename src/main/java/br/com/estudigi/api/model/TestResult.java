@@ -18,8 +18,14 @@ public class TestResult {
     Integer id;
 
     @ManyToOne
-    TestEvent testEvent;
+    Test test;
 
+    @ManyToOne
+    User user;
+
+    Integer trial;
+
+    // Guardar no formato "questionId" : "choiceId"
     @Column(columnDefinition = "json")
     @JsonRawValue
     String answers;
@@ -30,5 +36,6 @@ public class TestResult {
     String teacherComment;
 
     LocalDateTime startedAt;
+
     LocalDateTime sentAt;
 }

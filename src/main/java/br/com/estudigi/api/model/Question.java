@@ -1,9 +1,12 @@
 package br.com.estudigi.api.model;
 
+import br.com.estudigi.api.model.enums.Grade;
+import br.com.estudigi.api.model.enums.Subject;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -12,15 +15,33 @@ import java.util.List;
 @Setter
 public class Question {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
+
+    String topic;
+
+    @Enumerated(EnumType.STRING)
+    Subject subject;
+
+    @Enumerated(EnumType.STRING)
+    Grade grade;
 
     @Column(columnDefinition = "text")
     String title;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "question_choice",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "choice_id"))
     List<Choice> choices;
 
-    public Question() {
-    }
+    @ManyToOne
+    User createdBy;
+
+    @Column
+    LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column
+    LocalDateTime lastUpdate;
 }

@@ -11,7 +11,8 @@ import javax.persistence.*;
 @Setter
 public class Choice {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
     @Column(columnDefinition = "text")

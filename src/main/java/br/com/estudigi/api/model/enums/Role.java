@@ -1,10 +1,9 @@
 package br.com.estudigi.api.model.enums;
 
 public enum Role {
-    ADMIN ("Administrador"),
-    STUDENT ("Estudante"),
-    TEACHER ("Professor(a)")
-    ;
+    ADMIN("Administrador"),
+    STUDENT("Estudante"),
+    TEACHER("Professor(a)");
 
     private final String description;
 

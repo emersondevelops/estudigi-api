@@ -2,6 +2,7 @@ package br.com.estudigi.api.model;
 
 import br.com.estudigi.api.model.enums.Role;
 import br.com.estudigi.api.model.enums.Sex;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,7 +45,7 @@ public class User {
     Role role;
 
     @Column
-    LocalDateTime registeredAt;
+    LocalDateTime registeredAt = LocalDateTime.now();
 
     @Column
     LocalDateTime lastUpdate;
@@ -52,9 +53,8 @@ public class User {
     @Column
     LocalDateTime lastLogin;
 
-
     @Column
-    Boolean active;
+    Boolean active = true;
 
     @Column(length = 11)
     String phone;
@@ -65,12 +65,10 @@ public class User {
     @Column
     String otherInfo;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="user_class_group",
-            joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="class_group_id")})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_class_group",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "class_group_id"))
+    @JsonIgnore
     List<ClassGroup> classGroups;
-
-    @OneToMany
-    List<TestEvent> testEvents;
 }
