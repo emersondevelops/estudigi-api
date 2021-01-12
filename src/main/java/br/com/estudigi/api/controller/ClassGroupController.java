@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -42,7 +44,7 @@ public class ClassGroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newClassGroup);
     }
 
-    @PostMapping("{classGroupId}/add-user/{userId}")
+    @PutMapping("{classGroupId}/add-user/{userId}")
     @CrossOrigin
     public ResponseEntity<ClassGroup> addUser(@PathVariable Integer classGroupId, @PathVariable Integer userId)
             throws NotFoundException {
@@ -53,6 +55,19 @@ public class ClassGroupController {
         user.getClassGroups().add(classGroup);
         userRepository.save(user);
         return ResponseEntity.accepted().body(classGroup);
+    }
+
+    @PutMapping("{classGroupId}/remove-user/{userId}")
+    @CrossOrigin
+    public ResponseEntity<?> removeUser(@PathVariable Integer classGroupId, @PathVariable Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        ClassGroup classGroup = classGroupRepository.findById(classGroupId).orElse(null);
+        if (user != null && classGroup != null) {
+            user.getClassGroups().remove(classGroup);
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(classGroup);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Class group or user not found!");
     }
 
     @PutMapping("/{classGroupId}")
@@ -82,8 +97,11 @@ public class ClassGroupController {
     @DeleteMapping("/{classGroupId}")
     @CrossOrigin
     public ResponseEntity<?> delete(@PathVariable Integer classGroupId) {
-        Optional<ClassGroup> classGroup = classGroupRepository.findById(classGroupId);
-        if (classGroup.isPresent()) {
+        ClassGroup classGroup = classGroupRepository.findById(classGroupId).orElse(null);
+        List<User> users = userRepository.findAll();
+        if (classGroup != null) {
+            classGroup.getUsers().removeAll(users);
+            classGroupRepository.save(classGroup);
             classGroupRepository.deleteById(classGroupId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Class group id: " + classGroupId + " deleted!");
         }

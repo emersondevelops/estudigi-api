@@ -1,5 +1,6 @@
 package br.com.estudigi.api.controller;
 
+import br.com.estudigi.api.controller.dto.UserDto;
 import br.com.estudigi.api.model.ClassGroup;
 import br.com.estudigi.api.model.User;
 import br.com.estudigi.api.repository.TestRepository;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -25,9 +28,9 @@ public class UserController {
 
     @GetMapping
     @CrossOrigin
-    public Page<User> read(Pageable pageable) {
+    public List<UserDto> read(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
-        return users;
+        return UserDto.convert(users);
     }
 
     @GetMapping("/role/{role}")
