@@ -28,7 +28,10 @@ public class ClassGroup {
     @Enumerated(EnumType.STRING)
     Grade grade;
 
-    @ManyToMany(mappedBy = "classGroups", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "class_group_user",
+            joinColumns = @JoinColumn(name = "class_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<User> users;
 
     @ManyToOne

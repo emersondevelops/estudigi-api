@@ -1,5 +1,6 @@
 package br.com.estudigi.api.controller;
 
+import br.com.estudigi.api.controller.dto.ClassGroupDto;
 import br.com.estudigi.api.model.ClassGroup;
 import br.com.estudigi.api.model.User;
 import br.com.estudigi.api.repository.ClassGroupRepository;
@@ -11,12 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
-import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/class-group")
@@ -30,13 +27,6 @@ public class ClassGroupController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping
-    @CrossOrigin
-    public Page<ClassGroup> read(Pageable pageable) {
-        Page<ClassGroup> classGroups = classGroupRepository.findAll(pageable);
-        return classGroups;
-    }
-
     @PostMapping
     @CrossOrigin
     public ResponseEntity<ClassGroup> create(@RequestBody ClassGroup classGroup) {
@@ -44,17 +34,35 @@ public class ClassGroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newClassGroup);
     }
 
+    @GetMapping
+    @CrossOrigin
+    public List<ClassGroupDto> read(Pageable pageable) {
+        Page<ClassGroup> classGroups = classGroupRepository.findAll(pageable);
+        return ClassGroupDto.convert(classGroups);
+    }
+
+    @GetMapping("/{classGroupId}")
+    @CrossOrigin
+    public ResponseEntity<?> readById(@PathVariable Integer classGroupId) {
+        ClassGroup classGroup = classGroupRepository.findById(classGroupId).orElse(null);
+        if (classGroup != null) {
+            ClassGroupDto classGroupDto = new ClassGroupDto(classGroup);
+            return ResponseEntity.ok(classGroupDto);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Class group id: " + classGroupId + " not found!");
+    }
+
     @PutMapping("{classGroupId}/add-user/{userId}")
     @CrossOrigin
-    public ResponseEntity<ClassGroup> addUser(@PathVariable Integer classGroupId, @PathVariable Integer userId)
-            throws NotFoundException {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found for id: " + userId));
-        ClassGroup classGroup = classGroupRepository.findById(classGroupId)
-                .orElseThrow(() -> new NotFoundException("Class group not found for id: " + classGroupId));
-        user.getClassGroups().add(classGroup);
-        userRepository.save(user);
-        return ResponseEntity.accepted().body(classGroup);
+    public ResponseEntity<?> addUser(@PathVariable Integer classGroupId, @PathVariable Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        ClassGroup classGroup = classGroupRepository.findById(classGroupId).orElse(null);
+        if (user != null && classGroup != null) {
+            classGroup.getUsers().add(user);
+            classGroupRepository.save(classGroup);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(classGroup);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Class group or user not found!");
     }
 
     @PutMapping("{classGroupId}/remove-user/{userId}")
@@ -63,8 +71,8 @@ public class ClassGroupController {
         User user = userRepository.findById(userId).orElse(null);
         ClassGroup classGroup = classGroupRepository.findById(classGroupId).orElse(null);
         if (user != null && classGroup != null) {
-            user.getClassGroups().remove(classGroup);
-            userRepository.save(user);
+            classGroup.getUsers().remove(user);
+            classGroupRepository.save(classGroup);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(classGroup);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Class group or user not found!");
@@ -84,15 +92,6 @@ public class ClassGroupController {
         return ResponseEntity.ok(updatedClassGroup);
     }
 
-    @GetMapping("/{classGroupId}")
-    @CrossOrigin
-    public ResponseEntity<ClassGroup> readById(@PathVariable Integer classGroupId)
-            throws NotFoundException {
-        ClassGroup existingClassGroup = classGroupRepository.findById(classGroupId)
-                .orElseThrow(() -> new NotFoundException("Class group not found for id: " + classGroupId));
-        return ResponseEntity.ok(existingClassGroup);
-    }
-
     // Bom exemplo de como tratar uma resposta
     @DeleteMapping("/{classGroupId}")
     @CrossOrigin
@@ -100,6 +99,7 @@ public class ClassGroupController {
         ClassGroup classGroup = classGroupRepository.findById(classGroupId).orElse(null);
         List<User> users = userRepository.findAll();
         if (classGroup != null) {
+            // Remove todas as associações com usuários antes, pois sem isso os usuários também são removidos.
             classGroup.getUsers().removeAll(users);
             classGroupRepository.save(classGroup);
             classGroupRepository.deleteById(classGroupId);
