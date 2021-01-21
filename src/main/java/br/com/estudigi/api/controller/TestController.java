@@ -2,9 +2,13 @@ package br.com.estudigi.api.controller;
 
 import br.com.estudigi.api.model.Test;
 import br.com.estudigi.api.repository.TestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/test")
@@ -23,13 +27,16 @@ public class TestController {
     }
 
     @GetMapping
-    @CrossOrigin
-    public ResponseEntity<?> readAll() {
-        return ResponseEntity.ok(testRepository.findAll());
+    public Page<Test> readAll(Pageable pageable) {
+        return testRepository.findAll(pageable);
+    }
+
+    @GetMapping("/created-by/{userId}")
+    public Page<Test> readByCreatedBy(Pageable pageable, @PathVariable Integer userId) {
+        return  testRepository.getTestsByCreatedBy(pageable, userId);
     }
 
     @GetMapping("/{testId}")
-    @CrossOrigin
     public ResponseEntity<?> readById(@PathVariable Integer testId) {
         Test test = testRepository.findById(testId).orElse(null);
         if (test != null) {
@@ -39,17 +46,30 @@ public class TestController {
     }
 
     @PutMapping("/{testId}")
-    @CrossOrigin
-    public ResponseEntity<?> update(@PathVariable Integer testId) {
+    public ResponseEntity<?> update(@PathVariable Integer testId, @RequestBody Test updatedTest) {
         Test test = testRepository.findById(testId).orElse(null);
         if (test != null) {
-            return null;
+
+            test.setName(updatedTest.getName());
+
+            // O método clear() neste caso está sendo usado para remover as associações sem deletar as entidades.
+            test.getQuestions().clear();
+            test.setQuestions(updatedTest.getQuestions());
+
+            test.getClassGroups().clear();
+            test.setClassGroups(updatedTest.getClassGroups());
+
+            test.setQuestionValue(updatedTest.getQuestionValue());
+            test.setRepeatTimes(updatedTest.getRepeatTimes());
+            test.setLastUpdate(LocalDateTime.now());
+            testRepository.save(test);
+
+            return ResponseEntity.ok(test);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Test id " + testId + " not found!");
     }
 
     @DeleteMapping("/{testId}")
-    @CrossOrigin
     public ResponseEntity<?> delete(@PathVariable Integer testId) {
         Test test = testRepository.findById(testId).orElse(null);
         if (test != null) {
