@@ -1,5 +1,6 @@
 package br.com.estudigi.api.controller;
 
+import br.com.estudigi.api.controller.dto.TestDto;
 import br.com.estudigi.api.model.Test;
 import br.com.estudigi.api.repository.TestRepository;
 import org.springframework.data.domain.Page;
@@ -27,8 +28,9 @@ public class TestController {
     }
 
     @GetMapping
-    public Page<Test> readAll(Pageable pageable) {
-        return testRepository.findAll(pageable);
+    public Page<TestDto> readAll(Pageable pageable) {
+        Page<Test> tests = testRepository.findAll(pageable);
+        return tests.map(TestDto::new);
     }
 
     @GetMapping("/created-by/{userId}")
