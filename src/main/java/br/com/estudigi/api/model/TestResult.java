@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "test_results")
@@ -25,10 +26,11 @@ public class TestResult {
 
     Integer trial;
 
-    // Guardar no formato "questionId" : "choiceId"
-    @Column(columnDefinition = "json")
-    @JsonRawValue
-    String answers;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "test_result_answer",
+            joinColumns = @JoinColumn(name = "test_result_id"),
+            inverseJoinColumns = @JoinColumn(name = "answer_id"))
+    List<Answer> answers;
 
     Double score;
 

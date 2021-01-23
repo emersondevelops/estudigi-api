@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "questions")
 @Getter
 @Setter
-public class Question {
+public class Question implements Comparable<Question> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,4 +44,12 @@ public class Question {
 
     @Column
     LocalDateTime lastUpdate;
+
+    @Override
+    public int compareTo(Question question) {
+        if (getId() == null || question.getId() == null) {
+            return 0;
+        }
+        return getId().compareTo(question.getId());
+    }
 }
