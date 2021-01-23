@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin
 public class UserController {
 
     final UserRepository userRepository;
@@ -26,28 +27,24 @@ public class UserController {
     }
 
     @PostMapping
-    @CrossOrigin
     public ResponseEntity<User> create(@RequestBody User user) {
         User newUser = userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @GetMapping
-    @CrossOrigin
-    public List<UserDto> read(Pageable pageable) {
+    public Page<UserDto> readAll(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
-        return UserDto.convert(users);
+        return users.map(UserDto::new);
     }
 
     @GetMapping("/role/{role}")
-    @CrossOrigin
     public List<UserDto> readByRole(Pageable pageable, @PathVariable String role) {
         Page<User> users = userRepository.findByRole(pageable, role);
         return UserDto.convert(users);
     }
 
     @GetMapping("/{userId}")
-    @CrossOrigin
     public ResponseEntity<?> readById(@PathVariable Integer userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
@@ -57,7 +54,6 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    @CrossOrigin
     public ResponseEntity<User> update(@PathVariable Integer userId, @RequestBody User user)
             throws NotFoundException {
         User existingUser = userRepository.findById(userId)
