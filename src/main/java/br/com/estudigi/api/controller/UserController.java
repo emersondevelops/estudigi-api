@@ -39,9 +39,9 @@ public class UserController {
     }
 
     @GetMapping("/role/{role}")
-    public List<UserDto> readByRole(Pageable pageable, @PathVariable String role) {
+    public Page<UserDto> readByRole(Pageable pageable, @PathVariable String role) {
         Page<User> users = userRepository.findByRole(pageable, role);
-        return UserDto.convert(users);
+        return users.map(UserDto::new);
     }
 
     @GetMapping("/{userId}")

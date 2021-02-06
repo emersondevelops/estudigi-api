@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/test")
+@CrossOrigin
 public class TestController {
 
     final TestRepository testRepository;

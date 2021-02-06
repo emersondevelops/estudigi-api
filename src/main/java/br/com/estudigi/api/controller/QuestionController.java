@@ -4,6 +4,8 @@ import br.com.estudigi.api.model.Choice;
 import br.com.estudigi.api.model.Question;
 import br.com.estudigi.api.repository.ChoiceRepository;
 import br.com.estudigi.api.repository.QuestionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +34,17 @@ public class QuestionController {
 
     @GetMapping
     @CrossOrigin
-    public ResponseEntity<?> listAll() {
-        return ResponseEntity.ok(questionRepository.findAll());
+    public Page<Question> listAll(Pageable pageable) {
+        return questionRepository.findAll(pageable);
     }
+
+    /*
+    *     @GetMapping
+    public Page<UserDto> readAll(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(UserDto::new);
+    }
+    * */
 
     @GetMapping("/{questionId}")
     @CrossOrigin
