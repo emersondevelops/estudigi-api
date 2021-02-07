@@ -6,6 +6,8 @@ import br.com.estudigi.api.model.TestResult;
 import br.com.estudigi.api.repository.QuestionRepository;
 import br.com.estudigi.api.repository.TestRepository;
 import br.com.estudigi.api.repository.TestResultRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping(("/test-result"))
+@RequestMapping("/test-result")
+@CrossOrigin
 public class TestResultController {
 
     final TestResultRepository testResultRepository;
@@ -68,6 +71,11 @@ public class TestResultController {
             return ResponseEntity.ok().body(testResult);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/by-test-id/{testId}")
+    public Page<TestResult> readAllByTestId(@PathVariable Integer testId, Pageable pageable) {
+        return testResultRepository.findAllByTestId(pageable, testId);
     }
 
     @PutMapping("/{testResultId}")
